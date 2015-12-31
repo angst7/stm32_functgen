@@ -26,7 +26,7 @@
 #pragma GCC diagnostic ignored "-Wreturn-type"
 
 #define BUFFER_SIZE 16
-#define SAMPLES_SIZE 2		// Number of ADC1 channels we're scanning
+#define SAMPLES_SIZE 3		// Number of ADC1 channels we're scanning
 
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
@@ -60,12 +60,12 @@ int main(int argc, char* argv[])
 {
 
   uint16_t i;
-  uint16_t freq = 370;
-  uint16_t amp = 500;
   uint16_t freqValues[5] = {0};
   uint16_t nextValue = 0;
   uint16_t sum = 0;
   uint16_t dacData[DAC_SAMPLES_SIZE * 2];
+  applicationState appState = {.dacData=(uint16_t*)&dacData, .freq=370,
+		  .func=F_SINE_WAVE, .amp=500, .offset=2050};
 
   MX_GPIO_Init();
   MX_DMA_Init();
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
   activeBucket = 0;
   lastOut = 0;
 
-  Fill_DAC_Half_Buffer(dacData, dacBucket, freq, amp);
+  //Fill_DAC_Half_Buffer(dacData, dacBucket, freq, amp, offset);
   dacBucket = 0;
 
   if (HAL_TIM_Base_Start_IT(&htim2) != HAL_OK)
@@ -112,7 +112,8 @@ int main(int argc, char* argv[])
     {
 
 	  if (dacBucket) {
-		  Fill_DAC_Half_Buffer(dacData, dacBucket, freq, amp);
+		  appState.bin = dacBucket;
+		  Fill_DAC_ST_Half_Buffer(&appState);
 		  dacBucket = 0;
 	  }
 
@@ -121,11 +122,15 @@ int main(int argc, char* argv[])
 		  	HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_9);
 		  	freqValues[nextValue++] = sampleData[(sampleBucket-1)*SAMPLES_SIZE];
 
-		  	amp = (sampleData[(sampleBucket-1)*SAMPLES_SIZE+1]/2);
+		  	appState.amp = (sampleData[(sampleBucket-1)*SAMPLES_SIZE+1]/2);
 
-		  	if (amp > 2000)
-		  		amp = 2000;
+		  	if (appState.amp > 2000)
+		  		appState.amp = 2000;
 
+		  	appState.offset = (sampleData[(sampleBucket-1)*SAMPLES_SIZE+2]/2);
+
+		  	if (appState.offset > 4000)
+		  		appState.offset = 4000;
 
 		  	if (nextValue == 5)
 		  		nextValue = 0;
@@ -134,7 +139,7 @@ int main(int argc, char* argv[])
 		  	for (i=0; i<5; i++) {
 		  		sum += freqValues[i];
 		  	}
-		    freq = (sum/5)+100;
+		    appState.freq = (sum/5)+100;
 
 		  	sampleBucket = 0;
 	  }
@@ -178,6 +183,10 @@ void MX_ADC1_Init(void)
 
   HAL_ADC_ConfigChannel(&hadc1, &sConfig);
 
+  sConfig.Channel = ADC_CHANNEL_5;
+  sConfig.Rank = 3;
+
+  HAL_ADC_ConfigChannel(&hadc1, &sConfig);
 }
 
 /* DAC init function */
