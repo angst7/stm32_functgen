@@ -6,10 +6,10 @@ so other MPUs will require some rework (or may not work at all).
 This is a GNU ARM Eclipse project.  It was written to work with the stm32 breakout board.
 
 Currently implemented functions are:
-*Sine Wave (computed via the CMSIS f32 lookup tables)
-*Square Wave
-*Triangle Wave
-*Sawtooth Wave
+* Sine Wave (computed via the CMSIS f32 lookup tables)
+* Square Wave
+* Triangle Wave
+* Sawtooth Wave
 
 Each of these functions can be called, but they are not currently implemented in a way that would allow you to easily switch between
 them.  
@@ -19,5 +19,6 @@ read on ADC1 Channels 0 and 1 respectively.
 
 It's pretty rough at the moment, but I wanted to get it up here for folks who've been watching me make this on livecoding.tv/angst7
 
+## License ##
 Licensed under BSD unless otherwise specified in the source code (some code is ST Microcelectronics boilerplate and CMSIS libraries)
 See LICENSE for other info.
