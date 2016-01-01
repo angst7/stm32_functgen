@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
 
 	  if (dacBucket) {
 		  appState.bin = dacBucket;
-		  Fill_DAC_ST_Half_Buffer(&appState);
+		  Fill_DAC_TW_Half_Buffer(&appState);
 		  dacBucket = 0;
 	  }
 

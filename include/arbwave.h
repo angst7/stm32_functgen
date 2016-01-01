@@ -10,7 +10,7 @@
 
 #include "stm32f4xx.h"
 
-#define DAC_OUTPUT_RATE 100000
+#define DAC_OUTPUT_RATE 120000
 #define DAC_SAMPLES_SIZE 5000
 
 typedef enum {

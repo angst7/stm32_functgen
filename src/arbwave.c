@@ -77,13 +77,19 @@ void Fill_DAC_ST_Half_Buffer(applicationState* appState) {
 }
 
 void Fill_DAC_Half_Buffer(applicationState* appState) {
-	uint16_t *activeSample = appState->dacData+((appState->bin-1)*DAC_SAMPLES_SIZE);
+	uint16_t *activeSample = appState->dacData+
+								((appState->bin-1)*DAC_SAMPLES_SIZE);
 	uint32_t i = 0;
 	uint16_t outVal = 0;
-	float32_t scaleVal = appState->freq*(M_TWOPI/DAC_OUTPUT_RATE);
-
+	float32_t scaleVal = (appState->freq*M_TWOPI)/DAC_OUTPUT_RATE;
 
 	uint16_t offset = 2*appState->offset;
+
+	uint16_t reset = DAC_OUTPUT_RATE/appState->freq;
+	float32_t step = DAC_OUTPUT_RATE*1.0f/appState->freq;
+
+	scaleVal *= (step/reset);	// correct for floating point / integer error
+
 	while (i < DAC_SAMPLES_SIZE) {
 		// calculate the sin of 2*pi*f/dac rate
 		outVal = (uint16_t)(arm_sin_f32(scaleVal*outPos++)*appState->amp+offset);
@@ -92,15 +98,10 @@ void Fill_DAC_Half_Buffer(applicationState* appState) {
 		*activeSample++ = outVal;
 
 		// check to see if we're near a multiple of 2*pi
-
-		if (outVal == offset) {
-			if (outPos > 400) {
-				if (arm_cos_f32(scaleVal*(outPos-1)) > 0) {
-					// reset the counter here to avoid glitches
-					outPos = 0;
-				}
-			}
+		if ((outPos > 10) && (outPos % reset == 0)) {
+			outPos = 0;
 		}
+
 		i++;
 	}
 
