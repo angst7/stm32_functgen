@@ -29,9 +29,6 @@ typedef struct {
 	uint16_t offset;
 } applicationState;
 
-void Fill_DAC_SW_Half_Buffer(applicationState* appState);
-void Fill_DAC_TW_Half_Buffer(applicationState* appState);
-void Fill_DAC_ST_Half_Buffer(applicationState* appState);
 void Fill_DAC_Half_Buffer(applicationState* appState);
 
 #endif /* ARBWAVE_H_ */

@@ -113,14 +113,14 @@ int main(int argc, char* argv[])
 
 	  if (dacBucket) {
 		  appState.bin = dacBucket;
-		  Fill_DAC_TW_Half_Buffer(&appState);
+		  Fill_DAC_Half_Buffer(&appState);
 		  dacBucket = 0;
 	  }
 
 	  if (sampleBucket) {
 
 		  	HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_9);
-		  	freqValues[nextValue++] = sampleData[(sampleBucket-1)*SAMPLES_SIZE];
+		  	freqValues[nextValue++] = sampleData[(sampleBucket-1)*SAMPLES_SIZE]*2.8;
 
 		  	appState.amp = (sampleData[(sampleBucket-1)*SAMPLES_SIZE+1]/2);
 
