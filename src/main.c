@@ -113,6 +113,17 @@ int main(int argc, char* argv[])
 
 	  if (dacBucket) {
 		  appState.bin = dacBucket;
+
+		  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_SET) {
+			  appState.func = F_SQUARE_WAVE;
+		  } else if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == GPIO_PIN_SET) {
+			  appState.func = F_TRIANGLE_WAVE;
+		  } else if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == GPIO_PIN_SET) {
+			  appState.func = F_SAWTOOTH_WAVE;
+		  } else if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == GPIO_PIN_SET) {
+			  appState.func = F_SINE_WAVE;
+		  }
+
 		  Fill_DAC_Half_Buffer(&appState);
 		  dacBucket = 0;
 	  }
@@ -273,6 +284,7 @@ void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __GPIOA_CLK_ENABLE();
+  __GPIOB_CLK_ENABLE();
   __GPIOH_CLK_ENABLE();
   __GPIOC_CLK_ENABLE();
 
@@ -282,6 +294,11 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 
