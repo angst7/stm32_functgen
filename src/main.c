@@ -25,9 +25,6 @@
 #pragma GCC diagnostic ignored "-Wmissing-declarations"
 #pragma GCC diagnostic ignored "-Wreturn-type"
 
-#define BUFFER_SIZE 16
-#define SAMPLES_SIZE 3		// Number of ADC1 channels we're scanning
-
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
 DAC_HandleTypeDef hdac;
@@ -113,14 +110,13 @@ int main(int argc, char* argv[])
 
 	  if (dacBucket) {
 		  appState.bin = dacBucket;
-
-		  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_SET) {
+		  if (pinset(SQUARE)) {
 			  appState.func = F_SQUARE_WAVE;
-		  } else if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == GPIO_PIN_SET) {
+		  } else if (pinset(TRIANGLE)) {
 			  appState.func = F_TRIANGLE_WAVE;
-		  } else if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == GPIO_PIN_SET) {
+		  } else if (pinset(SAWTOOTH)) {
 			  appState.func = F_SAWTOOTH_WAVE;
-		  } else if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == GPIO_PIN_SET) {
+		  } else if (pinset(SINE)) {
 			  appState.func = F_SINE_WAVE;
 		  }
 
@@ -130,7 +126,7 @@ int main(int argc, char* argv[])
 
 	  if (sampleBucket) {
 
-		  	HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_9);
+		  	toggle(RED_LED);
 		  	freqValues[nextValue++] = sampleData[(sampleBucket-1)*SAMPLES_SIZE]*2.8;
 
 		  	appState.amp = (sampleData[(sampleBucket-1)*SAMPLES_SIZE+1]/2);
@@ -289,16 +285,16 @@ void MX_GPIO_Init(void)
   __GPIOC_CLK_ENABLE();
 
   /*Configure GPIO pins : PC8 PC9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9;
+  GPIO_InitStruct.Pin = RED_LED_PIN|GREEN_LED_PIN;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(LED_PORT, &GPIO_InitStruct);
 
-  GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14;
+  GPIO_InitStruct.Pin = SQUARE_PIN|TRIANGLE_PIN|SAWTOOTH_PIN|SINE_PIN;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  HAL_GPIO_Init(SELECT_PORT, &GPIO_InitStruct);
 
 }
 

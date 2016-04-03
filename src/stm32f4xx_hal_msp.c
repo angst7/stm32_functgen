@@ -39,6 +39,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
+#include "arbwave.h"
 
 extern DMA_HandleTypeDef hdma_adc1;
 extern DMA_HandleTypeDef hdma_dac1;
@@ -101,10 +102,10 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     PA1			 ------> ADC1_IN1
     PA5			 ------> ADC1_IN5
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_5;
+    GPIO_InitStruct.Pin = FREQUENCY_PIN|AMPLITUDE_PIN|OFFSET_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    HAL_GPIO_Init(ADC_PORT, &GPIO_InitStruct);
 
     /* Peripheral DMA init*/
 
@@ -140,7 +141,7 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
     /**ADC1 GPIO Configuration
     PA0-WKUP     ------> ADC1_IN0
     */
-    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_5);
+    HAL_GPIO_DeInit(ADC_PORT, FREQUENCY_PIN|AMPLITUDE_PIN|OFFSET_PIN);
 
     /* Peripheral DMA DeInit*/
     HAL_DMA_DeInit(hadc->DMA_Handle);
@@ -160,10 +161,10 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
     /**DAC GPIO Configuration
     PA4     ------> DAC_OUT1
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_4;
+    GPIO_InitStruct.Pin = DAC_OUTPUT_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    HAL_GPIO_Init(DAC_PORT, &GPIO_InitStruct);
 
     hdma_dac1.Instance = DMA1_Stream5;
 	hdma_dac1.Init.Channel = DMA_CHANNEL_7;
@@ -200,7 +201,7 @@ void HAL_DAC_MspDeInit(DAC_HandleTypeDef* hdac)
     /**DAC GPIO Configuration
     PA4     ------> DAC_OUT1
     */
-    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_4);
+    HAL_GPIO_DeInit(DAC_PORT, DAC_OUTPUT_PIN);
 
     HAL_DMA_DeInit(hdac->DMA_Handle1);
 
