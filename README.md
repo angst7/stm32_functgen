@@ -9,13 +9,12 @@ Currently implemented functions are:
 * Sine Wave (computed via the CMSIS f32 lookup tables)
 * Square Wave
 * Triangle Wave
-* Sawtooth Wave
-
-Each of these functions can be called, but they are not currently implemented in a way that would allow you to easily switch between
-them.  
+* Sawtooth Wave  
 
 You can control the amplitude (from ~0 to VCC PP) and the frequency (From ~100HZ to 3kHz) using a potentiometer as a voltage divider
 read on ADC1 Channels 0 and 1 respectively. 
+
+Definitions for the default pins and ports are in arbwave.h for quick reference or modification.
 
 It's pretty rough at the moment, but I wanted to get it up here for folks who've been watching me make this on livecoding.tv/angst7
 
