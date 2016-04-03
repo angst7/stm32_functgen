@@ -44,7 +44,6 @@ extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim6;
 extern uint8_t sampleBucket;
 extern uint8_t dacBucket;
-//extern uint8_t activeBucket;
 
 /* USER CODE END 0 */
 
@@ -59,14 +58,8 @@ extern uint8_t dacBucket;
 */
 void SysTick_Handler(void)
 {
-  /* USER CODE BEGIN SysTick_IRQn 0 */
-
-  /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   HAL_SYSTICK_IRQHandler();
-  /* USER CODE BEGIN SysTick_IRQn 1 */
-
-  /* USER CODE END SysTick_IRQn 1 */
 }
 
 /******************************************************************************/
@@ -76,9 +69,9 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32f4xx.s).                    */
 /******************************************************************************/
 
-/* USER CODE BEGIN 1 */
-/*
-*/
+/**
+ * Timer 2 controls the ADC sample rate
+ */
 void TIM2_IRQHandler(void)
 {
 	HAL_TIM_IRQHandler(&htim2);
@@ -86,22 +79,18 @@ void TIM2_IRQHandler(void)
 
 
 /**
-* @brief This function handles TIM6 global interrupt, DAC1 and DAC2 underrun error interrupts.
+* Timer 6 controls the DAC output rate
 */
 void TIM6_DAC_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
-
-  /* USER CODE END TIM6_DAC_IRQn 0 */
   HAL_DAC_IRQHandler(&hdac);
   HAL_TIM_IRQHandler(&htim6);
-  /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
-
-  /* USER CODE END TIM6_DAC_IRQn 1 */
 }
 
 /**
-* @brief This function handles DMA2 stream0 global interrupt.
+* The ADC is configured on DMA Channel 2, Stream 0.  Whenever the HALF_MEM
+* interrupt is triggered, this sets the sampleBucket variable to the completed
+* half of the DMA area that is ready to be read.
 */
 void DMA2_Stream0_IRQHandler(void)
 {
@@ -113,11 +102,13 @@ void DMA2_Stream0_IRQHandler(void)
   }
 }
 
+/**
+* The DAC is configured on DMA Channel 1, Stream 5.  Whenever the HALF_MEM
+* interrupt is triggered, this sets the dacBucket variable to the half of
+* DMA area that is ready to be written.
+*/
 void DMA1_Stream5_IRQHandler(void)
 {
-  /* USER CODE BEGIN DMA1_Stream5_IRQn 0 */
-
-  /* USER CODE END DMA1_Stream5_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_dac1);
 
   if (hdma_dac1.State == HAL_DMA_STATE_READY_HALF_MEM0) {
@@ -126,10 +117,6 @@ void DMA1_Stream5_IRQHandler(void)
 	  dacBucket = 2;
   }
 
-
-  /* USER CODE BEGIN DMA1_Stream5_IRQn 1 */
-
-  /* USER CODE END DMA1_Stream5_IRQn 1 */
 }
 
 /* USER CODE END 1 */

@@ -3,7 +3,7 @@
 This is a basic function generator that uses the DAC on STM32F4 microcontrollers.  This makes use of the floating point math on the F4 
 so other MPUs will require some rework (or may not work at all).
 
-This is a GNU ARM Eclipse project.  It was written to work with the stm32 breakout board.
+This is a GNU ARM Eclipse project.  It was written to work with the [stm32 breakout board](https://github.com/angst7/stm32-breakout-mk2).
 
 Currently implemented functions are:
 * Sine Wave (computed via the CMSIS f32 lookup tables)
