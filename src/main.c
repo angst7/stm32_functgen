@@ -139,6 +139,8 @@ int main(int argc, char* argv[])
 
 	  if (dacBucket) {
 		  appState.bin = dacBucket;
+
+
 		  if (pinset(SQUARE)) {
 			  appState.func = F_SQUARE_WAVE;
 		  } else if (pinset(TRIANGLE)) {
@@ -148,8 +150,9 @@ int main(int argc, char* argv[])
 		  } else if (pinset(SINE)) {
 			  appState.func = F_SINE_WAVE;
 		  }
-
+		  toggle(GREEN_LED);
 		  Fill_DAC_Half_Buffer(&appState);
+		  toggle(GREEN_LED);
 		  dacBucket = 0;
 	  }
 
@@ -240,7 +243,7 @@ void MX_DAC_Init(void)
     /**DAC channel OUT1 config
     */
   sConfig.DAC_Trigger = DAC_TRIGGER_T6_TRGO;
-  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
+  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_DISABLE;
   HAL_DAC_ConfigChannel(&hdac, &sConfig, DAC_CHANNEL_1);
 
 }

@@ -34,8 +34,8 @@
 
 #include "stm32f4xx.h"
 
-#define DAC_OUTPUT_RATE 120000		// The update rate of the DAC in Hz
-#define DAC_SAMPLES_SIZE 5000		// The size of the DAC output buffer
+#define DAC_OUTPUT_RATE 420000		// The update rate of the DAC in Hz
+#define DAC_SAMPLES_SIZE 10000		// The size of the DAC output buffer
 
 #define SAMPLES_SIZE 3				// Number of ADC channels we're scanning
 
