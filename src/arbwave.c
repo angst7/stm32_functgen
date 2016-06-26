@@ -38,8 +38,8 @@ uint16_t lastBinFreq = 0;
 uint16_t lastFreq = 0;
 
 
-uint16_t Calc_Triangle_Wave(applicationState* appState, float32_t scaleVal,
-								 uint16_t* position, float32_t slope) {
+inline uint16_t Calc_Triangle_Wave(applicationState* appState, float32_t scaleVal,
+								 uint16_t *position, float32_t slope) {
 	uint16_t outVal = 0;
 	float32_t plotPos = scaleVal * (*position)++;
 
@@ -56,22 +56,23 @@ uint16_t Calc_Triangle_Wave(applicationState* appState, float32_t scaleVal,
 	return outVal;
 }
 
-uint16_t Calc_Square_Wave(applicationState* appState,
-								float32_t scaleVal, uint16_t* position) {
+inline uint16_t Calc_Square_Wave(uint16_t offset, uint16_t amp,
+								float32_t scaleVal, uint16_t *position) {
 	uint16_t outVal = 0;
 	float32_t plotPos = scaleVal * (*position)++;
+
 	if (plotPos < M_PI) {
-		outVal = appState->offset+2*appState->amp;
-	} else if (plotPos < M_TWOPI) {
-		outVal = appState->offset;
+		outVal = amp;
+	} else if (plotPos < 6.243) {
+		outVal = offset;
 	} else {
 		*position = 0;
-		outVal = appState->offset+2*appState->amp;
+		outVal = amp;
 	}
 	return outVal;
 }
 
-uint16_t Calc_SawTooth_Wave(applicationState* appState, float32_t scaleVal,
+inline uint16_t Calc_SawTooth_Wave(applicationState* appState, float32_t scaleVal,
 								uint16_t *position, float32_t slope) {
 	uint16_t outVal = 0;
 	float32_t plotPos = scaleVal * (*position)++;
@@ -90,7 +91,7 @@ void Fill_DAC_Half_Buffer(applicationState* appState) {
 								((appState->bin-1)*DAC_SAMPLES_SIZE);
 	uint32_t i = 0;
 	float32_t scaleVal=(appState->freq*M_TWOPI)/DAC_OUTPUT_RATE;
-	float32_t outVal = 0.0;
+
 	float32_t slope = (2*appState->amp)/M_PI;;
 
 	uint16_t offset = 2*appState->offset;
@@ -100,8 +101,10 @@ void Fill_DAC_Half_Buffer(applicationState* appState) {
 
 	switch(appState->func) {
 	case F_SQUARE_WAVE:
+		offset = appState->offset;
+		uint16_t amp = offset+2*appState->amp;
 		while (i < DAC_SAMPLES_SIZE) {
-			*activeSample++ = Calc_Square_Wave(appState, scaleVal, &outPos);
+			*activeSample++ = Calc_Square_Wave(offset, amp, scaleVal, &outPos);
 			i++;
 		}
 		break;
@@ -122,10 +125,7 @@ void Fill_DAC_Half_Buffer(applicationState* appState) {
 		scaleVal *= (step/reset);	// correct for floating point / integer error
 		while (i < DAC_SAMPLES_SIZE) {
 			// calculate the sin of 2*pi*f/dac rate
-			outVal = (uint16_t)(arm_sin_f32(scaleVal*outPos++)*appState->amp+offset);
-
-			// Scale by amplitude factor, add offset
-			*activeSample++ = outVal;
+			*activeSample++ = (uint16_t)(arm_sin_f32(scaleVal*outPos++)*appState->amp+offset);
 
 			// check to see if we're near a multiple of 2*pi
 			if ((outPos > 10) && (outPos % reset == 0)) {

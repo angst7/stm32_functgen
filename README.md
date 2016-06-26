@@ -11,7 +11,7 @@ Currently implemented functions are:
 * Triangle Wave
 * Sawtooth Wave  
 
-You can control the amplitude (from ~0 to VCC PP) the frequency (From ~100HZ to 11kHz), and the offset using a potentiometer as a voltage 
+You can control the amplitude (from ~0 to VCC PP) the frequency (From ~100HZ to 26kHz), and the offset using a potentiometer as a voltage 
 divider read on ADC1 Channels 0, 1 and 5 respectively. 
 
 Definitions for the default pins and ports are in arbwave.h for quick reference or modification.

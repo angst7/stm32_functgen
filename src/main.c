@@ -178,7 +178,7 @@ int main(int argc, char* argv[])
 		  	for (i=0; i<5; i++) {
 		  		sum += freqValues[i];
 		  	}
-		    appState.freq = (sum/5)+100;
+		    appState.freq = (sum>>1)+100;
 
 		  	sampleBucket = 0;
 	  }
